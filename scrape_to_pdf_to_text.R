@@ -1,27 +1,45 @@
-## NO CAPTCHA YET
+##########################################
+#                                        #
+#  Web scraping to text file - SMc 2017  #
+#                                        #
+##########################################
 
-library(XML)
+
+# RSelenium package: https://cran.r-project.org/web/packages/RSelenium/
+#
+# RSelenium basics: https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-basics.html
+#
+# RSelenium docker setup: https://cran.r-project.org/web/packages/RSelenium/vignettes/RSelenium-docker.html
+#
+# Privoxy download: https://www.privoxy.org/sf-download-mirror/
+#
+# Tor download (Expert Bundle not Tor Browser): https://www.torproject.org/download/download.html.en
+#
+# Using Privoxy with Tor: https://www.privoxy.org/faq/misc.html#TOR
+
+
+### 1) ENSURE PRIVOXY IS RUNNING
+### 2) START TOR EXTERNALLY (LEAVE WINDOW OPEN)
+### 3) CHANGE IEXPLORE PROXY (127.0.0.1:8118)
+### 4) START SELENIUM DOCKER IMAGE
+
+
+# Libraries
 library(RSelenium)
-library(mail)
 
-### ENSURE TOR RUNNING & IEXPLORE PROXY CHANGED
 
-### START TOR & RSELENIUM SERVER EXTERNALLY!!!!!!!!!!!
-
-# Start RSelenium server
-#RSelenium::checkForServer()
-#RSelenium::startServer()
-# Get new IP
-#writeLines('AUTHENTICATE\r\nSIGNAL NEWNYM\r\n', con=tor_con)
-
-# Set up file paths
+# File Paths
+rt <- file.path("E:","LOCAL_GIT","projectx")
+qp <- file.path(rt,"includes","qpdf","bin","qpdf.exe --decrypt")
+xp <- file.path(rt,"includes","xpdf","bin64","pdftotext.exe -raw")
 ldg <- file.path("E:","Horse","Landing") # also change in firefox profile
 trks <- file.path("E:","Horse","Tracks")
-qp <- file.path("C:","qpdf","bin","qpdf.exe --decrypt")
-xp <- file.path("C:","xpdf","bin64","pdftotext.exe -raw")
 
-# Set up tor connection 
+
+# Connections 
 tor_con <- socketConnection(host="127.0.0.1",port=9151)
+
+
 
 # Set up random url sequence
 url_rand <- sample(2:(nrow(df_urls)),(nrow(df_urls)-1))
@@ -47,7 +65,7 @@ for (i in url_rand[]) {
                                      , pdfjs.disabled = TRUE
                                      , plugin.scan.plid.all = FALSE
                                      , plugin.scan.Acrobat = 99L))
-    remDr <- remoteDriver(extraCapabilities = fprof)
+    remDr <- remoteDriver(remoteServerAddr = "192.168.99.100", port = 4445L, extraCapabilities = fprof)
     
     # Open RSel & start at historical results page
     remDr$open(silent = TRUE); Sys.sleep(2)
