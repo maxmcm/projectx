@@ -2,6 +2,8 @@
 
 library(rex)
 
+
+
 df_final <- data.frame(matrix(0,ncol=45))   
 colnames(df_final) <- c("trackname", "date", "racenum", "canyn", "canreason", "racetype", "horsetype"
                            , "trackdistance", "tracktype", "trackrecordhorse", "trackrecordtime", "trackrecorddate", "racecriteria", "detailracecriteria"
