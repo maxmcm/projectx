@@ -22,24 +22,25 @@
 ### 2) START TOR EXTERNALLY (LEAVE WINDOW OPEN)
 ### 3) CHANGE IEXPLORE PROXY (127.0.0.1:8118)
 ### 4) START SELENIUM DOCKER IMAGE
+###    --> //c/test should be shared folder in VBox
+###    -->  docker run -d -v //c/test/://home/seluser/Downloads -p 4445:4444 -p 5901:5900 selenium/standalone-firefox-debug
 
+############################################################
 
 # Libraries
 library(RSelenium)
-
 
 # File Paths
 rt <- file.path("E:","LOCAL_GIT","projectx")
 qp <- file.path(rt,"includes","qpdf","bin","qpdf.exe --decrypt")
 xp <- file.path(rt,"includes","xpdf","bin64","pdftotext.exe -raw")
-ldg <- file.path("E:","Horse","Landing") # also change in firefox profile
-trks <- file.path("E:","Horse","Tracks")
-
+ldg <- file.path("C:","test")
+trks <- file.path("Z:","Tracks")
 
 # Connections 
 tor_con <- socketConnection(host="127.0.0.1",port=9151)
 
-
+###########################################################
 
 # Set up random url sequence
 url_rand <- sample(2:(nrow(df_urls)),(nrow(df_urls)-1))
@@ -58,25 +59,44 @@ for (i in url_rand[]) {
                                      , startup.homepage_override_url = "about:blank"
                                      , startup.homepage_welcome_url = "about:blank"
                                      , startup.homepage_welcome_url.additional = "about:blank"
-                                     , browser.download.dir = "E:\\Horse\\Landing"
+                                     , browser.download.dir = "/home/seluser/Downloads"
                                      , browser.download.folderList = 2L
                                      , browser.download.manager.showWhenStarting = FALSE
+                                     , browser.download.manager.focusWhenStarting = FALSE
+                                     , browser.download.manager.closeWhenDone = TRUE
                                      , browser.helperApps.neverAsk.saveToDisk = "application/pdf, application/octet-stream"
                                      , pdfjs.disabled = TRUE
                                      , plugin.scan.plid.all = FALSE
                                      , plugin.scan.Acrobat = 99L))
-    remDr <- remoteDriver(remoteServerAddr = "192.168.99.100", port = 4445L, extraCapabilities = fprof)
+    
+    fprof2 <- makeFirefoxProfile(list(browser.startup.homepage = "about:blank"
+                                      , startup.homepage_override_url = "about:blank"
+                                      , startup.homepage_welcome_url = "about:blank"
+                                      , startup.homepage_welcome_url.additional = "about:blank"
+                                      , browser.download.dir = "/home/seluser/Downloads"
+                                      , browser.download.folderList = 2L
+                                      , browser.download.manager.showWhenStarting = FALSE
+                                      , browser.download.manager.focusWhenStarting = FALSE
+                                      , browser.download.manager.closeWhenDone = TRUE
+                                      , browser.helperApps.neverAsk.saveToDisk = "application/pdf, application/octet-stream"))
+    
+    
+    remDr <- remoteDriver(remoteServerAddr = "192.168.99.100", port = 4445L, extraCapabilities = fprof2)
     
     # Open RSel & start at historical results page
     remDr$open(silent = TRUE); Sys.sleep(2)
-    remDr$navigate("http://127.0.0.1"); Sys.sleep(5)
+    remDr$navigate("http://www.google.com"); Sys.sleep(5)
     
     #remDr$navigate("www.equibase.com/premium/eqbRaceChartCalendar.cfm"); Sys.sleep(sample(4:8,1))
     
     #remDr$navigate(df_urls[i,7]); Sys.sleep(sample(4:8,1))
     
     # Navigate direct to pdf
-    remDr$navigate(df_urls[i,10]); Sys.sleep(10)
+    print("check 1")
+    remDr$navigate(df_urls[i,10]); Sys.sleep(5); 
+    raceall <- remDr$findElement("id", "download") 
+    raceall$clickElement()
+    print("check 2")
 
     # Find downloaded file
     if (file.exists(paste(ldg, "/eqbPDFChartPlus.cfm", sep = "", collapse = "")) == TRUE) {

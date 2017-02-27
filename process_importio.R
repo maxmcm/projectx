@@ -1,10 +1,13 @@
 ## Process new import.io files into dataframe
-## test change
+## ie 2010.csv --> 2010_out.csv
+
+## manually aggregate all the years 2010_out.csv in one excel file (df.xlsx) then output to df.csv
 
 input_year <- 2010
 
 read_in <- file.path("E:","Horse",paste(input_year,".csv", sep = "", collapse = ""))
 read_df <- data.frame(read.csv(read_in))
+trackdf <- data.frame(read.csv(file.path("E:","Horse","tracks.csv")))
 
 ## Should load trackdf independently
 
@@ -12,8 +15,8 @@ m <- 1
 n <- 1
 p <- 1
 
-df<-data.frame(matrix(0,ncol=207))
-colnames(df)<-c("YYYY","MM","DD",trackdf$abbreviation)
+df <- data.frame(matrix(0,ncol=207))
+colnames(df) <- c("YYYY","MM","DD",as.vector(trackdf$abbreviation))
 
 test2 <- subset(read_df, Day > 0, select = Day:Year)
 
