@@ -94,9 +94,13 @@ for (i in url_rand[]) {
     
     # Flush connection & cookies & tor IP
     remDr$deleteAllCookies(); Sys.sleep(2)
+    
     writeLines('AUTHENTICATE\r\nSIGNAL NEWNYM\r\n', con=tor_con); Sys.sleep(5)
+    
     print(file.size(paste(trks, df_urls[i,5], paste(df_urls[i,3],"_", df_urls[i,2], "_", df_urls[i,1], ".txt", sep = "", collapse = ""),sep="/",collapse=""))/1024)
+    
     print(paste(df_urls[i,5],"_",df_urls[i,3],"_", df_urls[i,2], "_", df_urls[i,1], sep = "", collapse = ""))
+    
     remDr$close(); Sys.sleep(sample(5:15,1))
     
     
