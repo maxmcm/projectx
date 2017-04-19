@@ -22,7 +22,7 @@ z <- 1
 trks <- file.path("E:","Horse","Tracks")
 
 source("functions_text_to_df.R")
-source("support_text_to_df.R");
+source("support_text_to_df.R")
 
 
 ### START OF CODE ###
@@ -37,15 +37,11 @@ files <- list.files(trks, recursive = TRUE)
 for (n in 1:length(files)) {txtfiles[n] <- paste(trks, "/", files[n], sep="", collapse = "")}
 
 
-count_m <- 1
-
-
 ## Process text ## nrow(txtfiles)
-for (m in 30:30) {
+for (m in 1:nrow(txtfiles)) {
   
     # Clear dataframe
     df_subraces <- data.frame(matrix(0,ncol=142))
-    count_r <- 1
     colnames(df_subraces) <- col_names
     
   
@@ -83,35 +79,20 @@ for (m in 30:30) {
       win_row <- grep("^Winner: ", parse_race); win_tmp <- winner_fn(parse_race, win_row) ## WINNER
       breed_row <- grep("^Breeder: ", parse_race); breed_tmp <- breeder_fn(parse_race, breed_row) ## BREEDER
       scratch_row <- grep("^Scratched Horse", parse_race); scratch_tmp <- scratching_fn(parse_race, scratch_row) ## SCRATCHINGS - still to do amend for no scratchings
-      ht_starow <- (grep("^Last Raced Pgm Horse", parse_race) + 1); df_htrow <- horsetable_fn(parse_race, ht_starow, ft_row, fint_row, ru_row) ## HORSE TABLE
+      #ht_starow <- (grep("^Last Raced Pgm Horse", parse_race) + 1); df_htrow <- horsetable_fn(parse_race, ht_starow, ft_row, fint_row, ru_row) ## HORSE TABLE
       wpspl_row <- grep("Total WPS Pool:", parse_race); wpspl_tmp <- wpspool_fn(parse_race, wpspl_row) ## WPS POOL
       
       train_row <- grep("^Trainers: ", parse_race); train_tmp <- trainers_fn(parse_race, train_row) ## TRAINERS
       owners_row <- grep("^Owners: ", parse_race); owners_tmp <- owners_fn(parse_race, owners_row) ## OWNERS
       foot_row <- grep("^Footnotes", parse_race); foot_tmp <- footnotes_fn(parse_race, foot_row) ## FOOTNOTES
 
+      source("support_text_to_df.R")
+      
+      df_subraces[r,] <- bind_rows(df_merge)
 
-      
-      
-      
-      #df_subraces[r,] <- combine(trk_tmp, can_tmp, rtype_tmp, rc_tmp, ttype_tmp, prs_tmp, avm_tmp, wea_tmp, vor_tmp, off_tmp, ft_tmp, fint_tmp, st_tmp, ru_tmp, win_tmp, breed_tmp, scratch_tmp, df_htrow[1,], wpspl_tmp, first_tmp, second_tmp, third_tmp, exact_tmp, trif_tmp, super_tmp, train_tmp, owners_tmp, foot_tmp)
-      #count_r <- count_r + 1
-
-      
-      # c(trk_tmp, can_tmp, rtype_tmp, rc_tmp, ttype_tmp, prs_tmp, avm_tmp, wea_tmp, vor_tmp, off_tmp, ft_tmp, fint_tmp, st_tmp, ru_tmp, win_tmp, breed_tmp, scratch_tmp, df_htrow[1,], wpspl_tmp, first_tmp, second_tmp, third_tmp, exact_tmp, trif_tmp, super_tmp, train_tmp, owners_tmp, foot_tmp)
-
-      
-      df_subraces[r,] <- bind_rows(data.frame(df_merge))
-
-      # before wspl
-      
-
-        
     }
-
-  
               
-#df_final <- rbind(df_final,df_subraces)
+df_final <- rbind(df_final,df_subraces)
         
 }                               
 
@@ -210,52 +191,3 @@ for (m in 30:30) {
 
 #    df_pprlrow <- rbind(df_pprlrow, pprl_row)
 #  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#    x[[m]] <- data.table(re_matches(text2[row1:rown], rex(start, capture(non_spaces, name = "lr_date"),
-#                                      maybe(space), 
-#                                      maybe(group(capture(digits, name = "lr_rn"), 
-#                                                   capture(alphas, name = "lr_trk"), 
-#                                                   capture(digits, name = "lr_pos"))), 
-#                                      spaces, group(capture(digits, name = "pgm_pos"),maybe(alphas)),
-#                                      spaces, capture(anything, name = "horse"), 
-#                                      " (", capture(something, name = "jockey"),
-#                                      ")", spaces, group(capture(non_spaces, name = "wgt")),
-#                                      spaces, maybe(capture(group(non_spaces,maybe(spaces,not(spaces %or% digits))), name="meds_eq")),
-#                                      spaces, capture(digits, name = "post_pos"),
-#                                      spaces, capture(digit, name = "start"),
-#                                      spaces, group(capture(digit, name = "qtr_pos"),maybe(capture(group(non_spaces,maybe(space),maybe(non_spaces)), name = "qtr_lth"))),
-#                                      spaces, group(capture(digit, name = "hlf_pos"),maybe(capture(group(non_spaces,maybe(space),maybe(non_spaces)), name = "hlf_lth"))),
-#                                      spaces, group(capture(digit, name = "str_pos"),maybe(capture(group(non_spaces,maybe(space),maybe(non_spaces)), name = "str_lth"))),
-#                                      spaces, group(capture(digit, name = "fin_pos"),maybe(capture(group(non_spaces,maybe(space),maybe(non_spaces)), name = "fin_lth"))),
-#                                     spaces, group(capture(group(digits,".",digits), name = "odds"),maybe("*")),
-#                                     spaces, capture(anything, name = "comments")
-#                                     )))
-#    
-    #print(data.frame(x[[m]])  )  
-
-#df <- rbindlist(x)
-#print(df)
-#write.csv(df, file = paste(BASE_DL,"/text.csv", sep = "", collapse = ""))
